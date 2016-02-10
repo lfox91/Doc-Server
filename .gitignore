@@ -9,3 +9,13 @@ Doc-tor-darwin-x64
 
 # front-end build
 build
+
+#Database stuff
+dbController.js
+updateModel.js
+
+#original Scraper
+scraper.js
+
+#original server
+server.js

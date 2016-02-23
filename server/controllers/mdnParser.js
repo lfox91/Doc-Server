@@ -35,6 +35,11 @@ let mdn = {
 	//downloads tar file from kapeli.com
 	getJavascript: function ( req, res, next ) {
 		// NOTE: downloading ~160 MB(.tar) to disk
+		try {
+			fs.mkdirSync('./mdnFiles');
+		} catch (e) {
+			console.log("mdnFiles/ already exists");
+		}
 
 		let writeJS = fs.createWriteStream( './mdnFiles/javascript.tgz' );
 		let writeCSS = fs.createWriteStream( './mdnFiles/css.tgz' );
@@ -78,31 +83,41 @@ let mdn = {
 				require('single-line-log').stdout('HTML: ' + bytes +' MB');
 			} );
 
+		let counter = 0;
 		//close readStream and watcher
-		readJS.on( 'finish', function () {
-			readJS.close( function(){
-				watcherJS.close();
-				readCSS.on( 'finish', function () {
-					readCSS.close( function(){
-						watcherCSS.close();
-						readHTML.on( 'finish', function () {
-							readHTML.close( function(){
-								watcherHTML.close();
-								next();
-							});
-						});
-					});
+
+		let finished =  new Promise(function(resolve, reject) {
+			readJS.on( 'finish', function () {
+				readJS.close( function(){
+					watcherJS.close();
 				});
 			});
 		});
+		finished()
+		.then(
+			readCSS.on( 'finish', function () {
+				readCSS.close( function(){
+					watcherCSS.close();
+				});
+			})
+		).then(
+			readHTML.on( 'finish', function () {
+				readHTML.close( function(){
+					watcherHTML.close();
+					next();
+				});
+			})
+		);
+
+
 	},
 	extract: function ( req, res, next ) {
 		let inflate = zlib.Unzip();
 		let extractor = tar.Extract( {
-				path: './doc'
+				path: './mdn_Extraction'
 			} )
 			.on( 'error', function ( err ) {
-				throw err;
+				console.log(err);
 			} )
 			.on( 'end', function () {
 				console.log( 'extracted' );
@@ -199,8 +214,8 @@ let mdn = {
 			files = files.filter( elem => {
 				return elem.includes( '.html' );
 			} );
-			for ( let k of files ) {
-				KWObj[ k.replace( '.html', "" ) ] = base1 + k;
+			for ( let file of files ) {
+				KWObj[ file.replace( '.html', "" ) ] = base1 + file;
 			}
 		} );
 		fs.readdir( './doc' + base2, function ( err, files ) {
@@ -208,8 +223,8 @@ let mdn = {
 			files = files.filter( elem => {
 				return elem.includes( '.html' );
 			} );
-			for ( let k of files ) {
-				KWObj[ k.replace( '.html', "" ) ] = base2 + k;
+			for ( let file of files ) {
+				KWObj[ file.replace( '.html', "" ) ] = base2 + file;
 			}
 			req.KWObj = KWObj;
 			next();

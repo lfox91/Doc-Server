@@ -53,7 +53,7 @@ app.get( '/', function ( req, res ) {
   NOTE: mdn.download only provides a link for request module,
         mdn.getJavascript actually downloads the .tgz
 */
-app.get( '/mdn', mdn.download, mdn.getJavascript , /*mdn.extract, mdn.createClassObj, mdn.createMethodsObj, mdn.createEventObj, mdn.createKWObj, mdn.createFuncObj, mdn.sqlFile, mdn.zip,*/ function ( req, res ) {
+app.get( '/mdn', mdn.download, mdn.getJavascript , mdn.extract, /*mdn.createClassObj, mdn.createMethodsObj, mdn.createEventObj, mdn.createKWObj, mdn.createFuncObj, mdn.sqlFile, mdn.zip,*/ function ( req, res ) {
 	// res.sendFile(path.resolve('./mdn_javascript.zip'));
 	console.log('\n finished');
 });

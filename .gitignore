@@ -25,4 +25,7 @@ build
 scraper.bak.js
 server/middleware/nodeparser_working.js
 ..bfg-report
+
+#scraped files
 JavaScript.tgz
+mdnFiles

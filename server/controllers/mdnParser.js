@@ -85,15 +85,16 @@ let mdn = {
 
 		let counter = 0;
 		//close readStream and watcher
-
-		let finished =  new Promise(function(resolve, reject) {
-			readJS.on( 'finish', function () {
-				readJS.close( function(){
-					watcherJS.close();
+		function finished(){
+			let javascriptFinished =  new Promise(function(resolve, reject) {
+				readJS.on( 'finish', function () {
+					readJS.close( function(){
+						watcherJS.close();
+					});
 				});
 			});
-		});
-		finished()
+		}
+
 		.then(
 			readCSS.on( 'finish', function () {
 				readCSS.close( function(){
